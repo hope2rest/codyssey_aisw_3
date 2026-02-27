@@ -1,0 +1,19 @@
+{
+  "optimal_k": 34,
+  "cumulative_variance_at_k": 0.950268,
+  "reconstruction_mse": 0.049732,
+  "top_5_singular_values": [
+    99.673366,
+    83.66078,
+    78.648015,
+    73.235932,
+    62.823237
+  ],
+  "explained_variance_ratio_top5": [
+    0.204841,
+    0.144312,
+    0.127536,
+    0.110588,
+    0.081376
+  ]
+}
