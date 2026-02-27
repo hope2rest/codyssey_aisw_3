@@ -1,0 +1,5 @@
+from .q1_svd_validator import Q1SvdValidator
+from .q2_tfidf_validator import Q2TfidfValidator
+from .q3_cv_validator import Q3CvValidator
+from .q4_sentiment_validator import Q4SentimentValidator
+from .q5_detection_validator import Q5DetectionValidator
