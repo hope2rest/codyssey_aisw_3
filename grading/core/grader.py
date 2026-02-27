@@ -1,5 +1,6 @@
 """Grader: 동적 Validator 로더 및 실행기"""
 import importlib
+import importlib.util
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
@@ -20,8 +21,28 @@ class Grader:
         submission_dir: str,
         config: Optional[Dict[str, Any]] = None,
     ) -> BaseValidator:
-        """모듈 경로와 클래스명으로 Validator 인스턴스 생성"""
+        """모듈 경로와 클래스명으로 Validator 인스턴스 생성 (기존 방식)"""
         module = importlib.import_module(module_path)
+        validator_cls = getattr(module, class_name)
+        if not issubclass(validator_cls, BaseValidator):
+            raise TypeError(f"{class_name}은(는) BaseValidator의 서브클래스가 아닙니다.")
+        return validator_cls(submission_dir=submission_dir, config=config)
+
+    @staticmethod
+    def load_validator_from_file(
+        file_path: str,
+        class_name: str,
+        submission_dir: str,
+        config: Optional[Dict[str, Any]] = None,
+    ) -> BaseValidator:
+        """파일 경로에서 Validator 클래스를 직접 로드하여 인스턴스 생성 (새 방식)"""
+        fp = Path(file_path).resolve()
+        if not fp.exists():
+            raise FileNotFoundError(f"Validator 파일 없음: {fp}")
+        module_name = f"_validator_{fp.stem}_{id(fp)}"
+        spec = importlib.util.spec_from_file_location(module_name, str(fp))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
         validator_cls = getattr(module, class_name)
         if not issubclass(validator_cls, BaseValidator):
             raise TypeError(f"{class_name}은(는) BaseValidator의 서브클래스가 아닙니다.")
@@ -34,7 +55,7 @@ class Grader:
         submission_dir: str,
         config: Optional[Dict[str, Any]] = None,
     ) -> ValidationResult:
-        """단일 Validator 실행"""
+        """단일 Validator 실행 (모듈 경로 방식)"""
         validator = self.load_validator(module_path, class_name, submission_dir, config)
         result = validator.validate()
         self._results.append(result)
@@ -45,17 +66,38 @@ class Grader:
         config: Dict[str, Any],
         submission_dir: str,
     ) -> ValidationResult:
-        """config dict에서 validator 정보를 추출하여 실행"""
+        """config dict에서 validator 정보를 추출하여 실행
+
+        validators[].file 있으면 → 파일 경로 로딩 (새 방식)
+        validators[].module 있으면 → importlib 로딩 (기존 방식)
+        """
         validators = config.get("validators", [])
         if not validators:
             raise ValueError("config에 validators 항목이 없습니다.")
         v = validators[0]
-        return self.run_single(
-            module_path=v["module"],
-            class_name=v["class"],
-            submission_dir=submission_dir,
-            config=config,
-        )
+
+        if "file" in v:
+            # 새 방식: 파일 경로 기반 로딩
+            question_dir = config.get("_question_dir", "")
+            file_path = (Path(question_dir) / v["file"]).resolve()
+            validator = self.load_validator_from_file(
+                file_path=str(file_path),
+                class_name=v["class"],
+                submission_dir=submission_dir,
+                config=config,
+            )
+        else:
+            # 기존 방식: 모듈 경로 기반 로딩
+            validator = self.load_validator(
+                module_path=v["module"],
+                class_name=v["class"],
+                submission_dir=submission_dir,
+                config=config,
+            )
+
+        result = validator.validate()
+        self._results.append(result)
+        return result
 
     @property
     def results(self) -> List[ValidationResult]:

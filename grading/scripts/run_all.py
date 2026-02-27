@@ -16,16 +16,14 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from grading.core.grader import Grader
-from grading.utils.config_loader import load_config, ALL_MISSION_IDS
+from grading.utils.config_loader import (
+    load_config,
+    get_all_mission_ids,
+    build_submission_dirs,
+)
 
-# 미션 ID → 제출물 하위 디렉토리 매핑
-SUBMISSION_DIRS = {
-    "aiml_level1_q1_svd": "q1_svd",
-    "aiml_level1_q2_tfidf": "q2_tfidf",
-    "aiml_level2_q3_cv": "q3_CV",
-    "aiml_level2_q4_sentiment": "q4_Sentiment",
-    "aiml_level3_q5_detection": "q5_detection",
-}
+# 자동 탐색으로 매핑 생성
+SUBMISSION_DIRS = build_submission_dirs()
 
 
 def main():
@@ -61,9 +59,8 @@ def main():
     print("=" * 60)
     print()
 
-    for mission_id in ALL_MISSION_IDS:
-        sub_dir_name = SUBMISSION_DIRS[mission_id]
-        sub_dir = base_dir / sub_dir_name
+    for mission_id in get_all_mission_ids():
+        sub_dir = SUBMISSION_DIRS[mission_id]
 
         if not sub_dir.exists():
             print(f"[SKIP] {mission_id}: 디렉토리 없음 ({sub_dir})")

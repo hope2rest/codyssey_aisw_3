@@ -17,7 +17,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from grading.core.grader import Grader
-from grading.utils.config_loader import load_config, ALL_MISSION_IDS
+from grading.utils.config_loader import load_config, get_all_mission_ids
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
     parser.add_argument(
         "--mission-id",
         required=True,
-        choices=ALL_MISSION_IDS,
+        choices=get_all_mission_ids(),
         help="미션 ID",
     )
     parser.add_argument(

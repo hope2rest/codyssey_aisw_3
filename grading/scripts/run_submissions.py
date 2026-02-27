@@ -26,7 +26,11 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from grading.core.grader import Grader
-from grading.utils.config_loader import load_config
+from grading.utils.config_loader import (
+    load_config,
+    build_question_map,
+    build_no_solution_required,
+)
 
 # 파일명 정규식
 RESULT_RE = re.compile(
@@ -36,29 +40,9 @@ SOLUTION_RE = re.compile(
     r'^solution_(?P<stage>\w+)_q(?P<qnum>\d+)_(?P<sid>.+)\.py$'
 )
 
-# (stage, qnum) → (mission_id, data_subdir)
-QUESTION_MAP = {
-    ("advanced", "1"): ("aiml_level1_q1_svd", "q1_svd"),
-    ("advanced", "2"): ("aiml_level1_q2_tfidf", "q2_tfidf"),
-    ("advanced", "3"): ("aiml_level2_q3_cv", "q3_CV"),
-    ("advanced", "4"): ("aiml_level2_q4_sentiment", "q4_Sentiment"),
-    ("advanced", "5"): ("aiml_level3_q5_detection", "q5_detection"),
-    ("basic", "1"): ("aiml_level1_q1_svd", "q1_svd"),
-    ("basic", "2"): ("aiml_level1_q2_tfidf", "q2_tfidf"),
-    ("basic", "3"): ("aiml_level2_q3_cv", "q3_CV"),
-    ("basic", "4"): ("aiml_level2_q4_sentiment", "q4_Sentiment"),
-    ("basic", "5"): ("aiml_level3_q5_detection", "q5_detection"),
-    ("intro", "1"): ("aiml_level1_q1_svd", "q1_svd"),
-    ("intro", "2"): ("aiml_level1_q2_tfidf", "q2_tfidf"),
-    ("intro", "3"): ("aiml_level2_q3_cv", "q3_CV"),
-    ("intro", "4"): ("aiml_level2_q4_sentiment", "q4_Sentiment"),
-    ("intro", "5"): ("aiml_level3_q5_detection", "q5_detection"),
-}
-
-# solution이 필요 없는 문항 (코드 분석 없음)
-NO_SOLUTION_REQUIRED = {
-    ("advanced", "2"), ("basic", "2"), ("intro", "2"),
-}
+# 자동 탐색으로 매핑 생성
+QUESTION_MAP = build_question_map()
+NO_SOLUTION_REQUIRED = build_no_solution_required()
 
 
 def scan_submissions(submissions_dir: Path):
@@ -161,7 +145,7 @@ def main():
             print()
             continue
 
-        mission_id, data_subdir = QUESTION_MAP[question_key]
+        mission_id, data_path = QUESTION_MAP[question_key]
 
         # result 필수 확인
         if not result_file:
@@ -180,7 +164,7 @@ def main():
             continue
 
         # 데이터 디렉토리 확인
-        submission_dir = data_root / data_subdir
+        submission_dir = data_path
         if not submission_dir.exists():
             print(f"[SKIP] {label}: 데이터 디렉토리 없음 ({submission_dir})")
             skip_count += 1

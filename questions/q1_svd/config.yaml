@@ -1,0 +1,38 @@
+mission_id: aiml_level1_q1_svd
+name: "Q1. SVD 기반 차원축소 복원분석"
+description: "센서 데이터에서 SVD를 활용한 차원 축소 및 복원 오차 분석"
+difficulty: 1
+qnum: 1
+time_limit: 60
+passing_score: 1.0
+
+data_dir: data
+solution_file: q1_solution.py
+result_file: result_q1.json
+solution_required: true
+
+validators:
+  - file: validator.py
+    class: Q1SvdValidator
+
+ai_traps:
+  - "ddof=0 (모집단 표준편차) 사용 필수 - ddof=1 사용 시 결과 불일치"
+  - "상수 열(std≈0) 제거 후 표준화 필요"
+  - "full_matrices=False로 SVD 수행"
+
+checks:
+  - id: "1"
+    description: "optimal_k 일치"
+    points: 20
+  - id: "2"
+    description: "cumulative_variance_at_k 정확도"
+    points: 20
+  - id: "3"
+    description: "reconstruction_mse 정확도"
+    points: 20
+  - id: "4"
+    description: "top_5_singular_values 정확도"
+    points: 20
+  - id: "5"
+    description: "explained_variance_ratio_top5 정확도"
+    points: 20

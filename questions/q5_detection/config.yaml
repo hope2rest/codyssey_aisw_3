@@ -1,0 +1,55 @@
+mission_id: aiml_level3_q5_detection
+name: "Q5. 부품결함검출 딥러닝기초 전이학습"
+description: "규칙기반 → ML → NN → 전이학습 단계별 결함 검출 및 비즈니스 보고서"
+difficulty: 3
+qnum: 5
+time_limit: 120
+passing_score: 0.95
+
+data_dir: data
+solution_file: q6_solution.py
+result_file: result_q6.json
+solution_required: true
+
+validators:
+  - file: validator.py
+    class: Q5DetectionValidator
+
+ai_traps:
+  - "keras/torch 사용 금지 - sklearn만 사용"
+  - "class_weight='balanced' 적용 필수"
+  - "ReLU, Softmax 직접 구현 (NumPy)"
+  - "pretrained_nn_weights.npz에서 가중치 로드"
+  - "파일명: q6_solution.py, result_q6.json (q5가 아님!)"
+
+checks:
+  - id: "1"
+    description: "클래스 구현 (DefectImageLoader + InspectionLogProcessor)"
+    points: 10
+  - id: "2"
+    description: "데이터 정제 결과"
+    points: 10
+  - id: "3"
+    description: "conv2d 직접 구현 + Sobel 커널"
+    points: 10
+  - id: "4"
+    description: "규칙 기반 결과"
+    points: 10
+  - id: "5"
+    description: "ML 기반 결과"
+    points: 10
+  - id: "6"
+    description: "NN Forward Pass"
+    points: 10
+  - id: "7"
+    description: "전이학습 비교"
+    points: 10
+  - id: "8"
+    description: "개선 실험"
+    points: 10
+  - id: "9"
+    description: "비즈니스 보고서"
+    points: 10
+  - id: "10"
+    description: "라이브러리 적절 사용"
+    points: 10

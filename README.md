@@ -35,7 +35,7 @@
 │  3. 시스템이 자동으로 처리                                          │
 │                                                                 │
 │     파일명 파싱 → (단계, 문항, 학번) 추출                            │
-│     → 원본 데이터(q1_svd/ 등)와 대조하여 채점                        │
+│     → questions/ 내 데이터와 대조하여 채점                           │
 │     → 합격/불합격 판정                                             │
 └──────────────────────────┬──────────────────────────────────────┘
                            │
@@ -66,7 +66,7 @@
 | Q4 | 고객리뷰 감성분석 | Level 2 | 100 | 95% |
 | Q5 | 부품결함검출 딥러닝기초 전이학습 | Level 3 | 100 | 95% |
 
-각 문항의 상세 요구사항은 해당 폴더의 문제.md 파일을 참고하세요.
+각 문항의 상세 요구사항은 `questions/q{N}_*/문제.md` 파일을 참고하세요.
 
 ---
 
@@ -219,30 +219,26 @@ codyssey_aisw/
 │   │   ├── base_validator.py          # Template Method 추상 클래스 + _resolve_file()
 │   │   ├── check_item.py             # CheckItem + CheckStatus (검증 단위)
 │   │   ├── checklist.py              # 점수 집계
-│   │   ├── grader.py                 # 동적 Validator 로더
+│   │   ├── grader.py                 # 동적 Validator 로더 (모듈/파일 경로 지원)
 │   │   └── validation_result.py      # JSON/Markdown 리포트
-│   ├── plugins/aiml/validators/      # 문항별 Validator 플러그인
-│   │   ├── q1_svd_validator.py
-│   │   ├── q2_tfidf_validator.py
-│   │   ├── q3_cv_validator.py
-│   │   ├── q4_sentiment_validator.py
-│   │   └── q5_detection_validator.py
-│   ├── missions/aiml/                # 미션 설정 (YAML)
-│   │   ├── level1/ (q1_svd, q2_tfidf)
-│   │   ├── level2/ (q3_cv, q4_sentiment)
-│   │   └── level3/ (q5_detection)
-│   ├── utils/config_loader.py        # YAML 설정 로더
+│   ├── utils/config_loader.py        # YAML 자동 탐색 로더
 │   └── scripts/                      # CLI 스크립트
 │       ├── run_submissions.py        # ★ 제출물 일괄 채점 (submissions/ → results/)
 │       ├── run_grading.py            # 단일 문항 채점
 │       └── run_all.py               # 전체 5문항 채점
-├── q1_svd/                           # Q1 원본 데이터 + 문제.md
-├── q2_tfidf/                         # Q2 원본 데이터 + 문제.md
-├── q3_CV/                            # Q3 원본 데이터 + 문제.md
-├── q4_Sentiment/                     # Q4 원본 데이터 + 문제.md
-├── q5_detection/                     # Q5 원본 데이터 + 문제.md
+├── questions/                         # ★ 문제 정의 (Plug-and-Play)
+│   ├── q1_svd/
+│   │   ├── config.yaml               # 문제 설정 (mission_id, qnum, validators 등)
+│   │   ├── validator.py              # 검증 스크립트
+│   │   ├── 문제.md                    # 학생 제공용 문제지
+│   │   └── data/                     # 데이터 파일 + 솔루션 + 결과
+│   ├── q2_tfidf/
+│   ├── q3_cv/
+│   ├── q4_sentiment/
+│   └── q5_detection/
 ├── submissions/                      # ★ 학생 제출물 (여기에 파일을 넣으세요)
 ├── results/                          # ★ 채점 결과 (자동 생성)
+├── grade.bat                         # Windows 채점 단축 명령어
 ├── requirements.txt
 └── README.md
 ```
@@ -269,16 +265,84 @@ codyssey_aisw/
 
 이를 통해 기존 `run_grading.py`, `run_all.py`와 새 `run_submissions.py` 모두 동일한 Validator를 사용합니다.
 
+### Plug-and-Play 자동 탐색
+
+시스템이 시작될 때 `questions/*/config.yaml`을 자동 스캔하여 문제 매핑을 생성합니다.
+하드코딩된 매핑 없이 `config.yaml`의 `qnum`, `mission_id`, `validators` 필드로 자동 등록됩니다.
+
+Validator 로딩은 두 가지 방식을 지원합니다:
+
+- **파일 경로 방식** (새 방식): `validators[].file` — `importlib.util.spec_from_file_location`으로 직접 로딩
+- **모듈 경로 방식** (기존 방식): `validators[].module` — `importlib.import_module`으로 로딩
+
 ### CheckItem 부분 점수
 
 - `validator()`가 `bool` 반환 → pass(만점) / fail(0점)
 - `validator()`가 `int` 반환 → 부분 점수 (0 ~ max points)
 - `validator()`가 `(value, message)` 튜플 반환 → 점수 + 메시지
 
-### 동적 플러그인 로딩
+---
 
-`config.yaml`의 `validators` 항목에서 모듈 경로와 클래스명을 지정하면,
-`Grader`가 `importlib`로 동적 로드하여 실행합니다.
+## 새 문항 추가 방법
+
+`questions/` 폴더 안에 문제 폴더 하나만 만들면 끝입니다. 기존 파일 수정이 필요 없습니다.
+
+### 1. 문제 폴더 생성
+
+```
+questions/q6_clustering/
+├── config.yaml         ← 문제 설정 (필수)
+├── validator.py        ← 검증 스크립트 (필수)
+├── 문제.md             ← 학생 제공용 문제지
+└── data/               ← 데이터 파일들
+    ├── customer_data.csv
+    ├── q6_solution.py
+    └── result_q6.json
+```
+
+### 2. config.yaml 작성
+
+```yaml
+mission_id: aiml_level3_q6_clustering
+name: "Q6. 고객 클러스터링 분석"
+qnum: 6                              # 제출 파일명의 q{N}에 대응
+passing_score: 0.90
+
+validators:
+  - file: validator.py                # 같은 폴더 내 파일 지정
+    class: Q6ClusteringValidator
+
+data_dir: data                        # 데이터 하위 폴더
+result_file: result_q6.json
+solution_file: q6_solution.py
+solution_required: true               # false면 솔루션 없이도 채점
+```
+
+### 3. validator.py 작성
+
+```python
+from grading.core.base_validator import BaseValidator
+from grading.core.check_item import CheckItem
+
+class Q6ClusteringValidator(BaseValidator):
+    mission_id = "aiml_level3_q6_clustering"
+    name = "Q6. 고객 클러스터링 분석"
+
+    def setup(self):
+        # 데이터 로드 및 참조 답안 생성
+        ...
+
+    def build_checklist(self):
+        self.checklist.add(CheckItem(
+            id="1", description="클러스터 수 일치",
+            points=25, validator=lambda: ...,
+        ))
+        ...
+```
+
+### 4. 끝!
+
+`grade` 명령어로 바로 채점 가능합니다. 별도 설정이나 코드 수정이 필요 없습니다.
 
 ---
 
@@ -296,13 +360,3 @@ codyssey_aisw/
 | Q4 | 데이터 누수 | fit_transform(train) + transform(test) 분리 |
 | Q5 | 파일명 | q6_solution.py / result_q6.json 사용 (내부 매핑) |
 | Q5 | keras/torch | sklearn만 사용 가능 |
-
----
-
-## 새 문항 추가 방법
-
-1. `grading/plugins/aiml/validators/`에 새 Validator 클래스 작성 (`BaseValidator` 상속)
-2. `grading/missions/aiml/`에 `config.yaml` 추가
-3. `grading/utils/config_loader.py`의 `_MISSION_MAP`에 매핑 추가
-4. `grading/scripts/run_all.py`의 `SUBMISSION_DIRS`에 디렉토리 매핑 추가
-5. `grading/scripts/run_submissions.py`의 `QUESTION_MAP`에 매핑 추가
