@@ -195,8 +195,8 @@ def main():
             result.student_id = sid
 
             # 결과 판정
-            status = "success" if result.is_passed else "fail"
-            out_name = f"verify_{stage}_q{qnum}_{status}_{sid}"
+            status = "verified" if result.is_passed else "failed"
+            out_name = f"result_{stage}_q{qnum}_{sid}_{status}"
             out_path = output_dir / out_name
             out_path.mkdir(parents=True, exist_ok=True)
 

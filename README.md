@@ -1,8 +1,8 @@
 # AI/ML 시험 자동 채점 시스템
 
 플러그인 기반 채점 프레임워크를 사용하여 AI/ML 5개 문항(총 500점)을 자동으로 채점합니다.
-학생 제출물을 `submissions/` 폴더에 모아두면, 파일명에서 단계/문항/학번을 자동 파싱하고
-채점 후 `results/` 폴더에 성공/실패로 분류하여 리포트를 생성합니다.
+학생이 제출한 결과물을 `submissions/` 폴더에 모아두면, 파일명에서 단계/문항/학번을 자동 파싱하고
+채점 후 `results/` 폴더에 검증 결과 리포트를 생성합니다.
 
 ---
 
@@ -10,7 +10,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  1. 학생이 제출물을 submissions/ 폴더에 넣는다                       │
+│  1. 학생이 제출한 결과물을 submissions/ 폴더에 넣는다                  │
 │                                                                 │
 │     submissions/                                                │
 │     ├── result_advanced_q1_260227001.json    ← 결과 파일         │
@@ -44,15 +44,15 @@
 │  4. results/ 폴더에 결과 생성                                      │
 │                                                                 │
 │     results/                                                    │
-│     ├── verify_advanced_q1_success_260227001/                   │
+│     ├── result_advanced_q1_260227001_verified/                  │
 │     │   ├── result.json    ← 기계 판독용 (점수, 항목별 상세)        │
 │     │   └── report.md      ← 사람 판독용 (마크다운 리포트)          │
-│     ├── verify_advanced_q2_fail_260227001/                      │
+│     ├── result_advanced_q2_260227001_failed/                    │
 │     │   ├── result.json                                         │
 │     │   └── report.md                                           │
 │     └── ...                                                     │
 │                                                                 │
-│     폴더명 규칙: verify_{단계}_q{번호}_{success|fail}_{학번}/       │
+│     폴더명 규칙: result_{단계}_q{번호}_{학번}_{verified|failed}/    │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -135,8 +135,8 @@ python -m grading.scripts.run_submissions \
 
 [INFO] 3개 제출물 발견
 
-[PASS] advanced_q1_260227001: 100/100 -> verify_advanced_q1_success_260227001/
-[FAIL] advanced_q2_260227001: 70/100 -> verify_advanced_q2_fail_260227001/
+[PASS] advanced_q1_260227001: 100/100 -> result_advanced_q1_260227001_verified/
+[FAIL] advanced_q2_260227001: 70/100 -> result_advanced_q2_260227001_failed/
 [SKIP] advanced_q3_260227001: solution 파일 누락
 
 ============================================================
