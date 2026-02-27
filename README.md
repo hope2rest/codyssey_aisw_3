@@ -24,10 +24,10 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │  2. 채점 명령어 실행                                               │
 │                                                                 │
-│     python -m grading.scripts.run_submissions                   │
-│       --data-root .                                             │
-│       --submissions-dir ./submissions                           │
-│       --output-dir ./results                                    │
+│     grade                        ← 전체 채점                     │
+│     grade q3                     ← Q3만 채점                     │
+│     grade 260227001              ← 특정 학생만 채점               │
+│     grade advanced_q3_260227001  ← 특정 학생의 특정 문항           │
 └──────────────────────────┬──────────────────────────────────────┘
                            │
                            ▼
@@ -70,11 +70,16 @@
 
 ---
 
-## 설치
+## 시작하기
 
 ```bash
+git clone https://github.com/hope2rest/codyssey_aisw_3.git
+cd codyssey_aisw_3
 pip install -r requirements.txt
 ```
+
+클론하면 `submissions/` 폴더가 빈 상태로 포함되어 있습니다.
+제출물을 넣고 `grade` 명령어를 실행하면 `results/` 폴더가 자동 생성됩니다.
 
 ---
 
