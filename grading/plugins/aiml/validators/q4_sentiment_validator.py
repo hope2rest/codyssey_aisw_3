@@ -47,11 +47,12 @@ class Q4SentimentValidator(BaseValidator):
         self._exp_f1 = round(float(f1_score(y_te, ep, average="macro")), 4)
 
         # 학생 결과 로드
-        with open(data_dir / "result_q4.json", "r", encoding="utf-8") as f:
+        result_path = self._resolve_file("result_q4.json", "result_file_override")
+        with open(result_path, "r", encoding="utf-8") as f:
             self._ans = json.load(f)
 
         # 코드 로드
-        code_path = data_dir / "q4_solution.py"
+        code_path = self._resolve_file("q4_solution.py", "solution_file_override")
         try:
             with open(code_path, "r", encoding="utf-8") as f:
                 self._code = f.read()

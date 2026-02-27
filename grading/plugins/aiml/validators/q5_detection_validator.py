@@ -51,7 +51,7 @@ class Q5DetectionValidator(BaseValidator):
         # 코드 분석
         # Q5 문제는 q6_solution.py를 사용 (파일명 매핑)
         solution_name = self.config.get("solution_file", "q6_solution.py")
-        code_path = data_dir / solution_name
+        code_path = self._resolve_file(solution_name, "solution_file_override")
         try:
             with open(code_path, "r", encoding="utf-8") as f:
                 self._code = f.read()
@@ -69,7 +69,8 @@ class Q5DetectionValidator(BaseValidator):
 
         # 학생 결과 로드
         result_name = self.config.get("result_file", "result_q6.json")
-        with open(data_dir / result_name, "r", encoding="utf-8") as f:
+        result_path = self._resolve_file(result_name, "result_file_override")
+        with open(result_path, "r", encoding="utf-8") as f:
             self._ans = json.load(f)
 
     def build_checklist(self):

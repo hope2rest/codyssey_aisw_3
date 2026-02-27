@@ -36,6 +36,13 @@ class BaseValidator(ABC):
     def passing_score(self) -> float:
         return self.config.get("passing_score", 0.95)
 
+    def _resolve_file(self, default_name: str, override_key: str) -> Path:
+        """config에 override 경로가 있으면 사용, 없으면 submission_dir/default_name"""
+        override = self.config.get(override_key)
+        if override:
+            return Path(override).resolve()
+        return self.submission_dir / default_name
+
     def setup(self) -> None:
         """데이터 로드 및 참조 답안 생성. 서브클래스에서 오버라이드."""
         pass

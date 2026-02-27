@@ -32,7 +32,7 @@ class Q3CvValidator(BaseValidator):
         ]
 
         # 코드 파싱
-        code_path = data_dir / "q3_solution.py"
+        code_path = self._resolve_file("q3_solution.py", "solution_file_override")
         try:
             with open(code_path, "r", encoding="utf-8") as f:
                 self._code = f.read()
@@ -46,7 +46,8 @@ class Q3CvValidator(BaseValidator):
             self._funcs = []
 
         # 학생 결과 로드
-        with open(data_dir / "result_q3.json", "r", encoding="utf-8") as f:
+        result_path = self._resolve_file("result_q3.json", "result_file_override")
+        with open(result_path, "r", encoding="utf-8") as f:
             self._ans = json.load(f)
 
     def build_checklist(self):

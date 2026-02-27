@@ -83,7 +83,8 @@ class Q2TfidfValidator(BaseValidator):
         self._ref_search = ref_search
 
         # 학생 결과 로드
-        with open(data_dir / "result_q2.json", "r", encoding="utf-8") as f:
+        result_path = self._resolve_file("result_q2.json", "result_file_override")
+        with open(result_path, "r", encoding="utf-8") as f:
             self._ans = json.load(f)
 
     def build_checklist(self):

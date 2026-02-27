@@ -45,9 +45,17 @@ class Q1SvdValidator(BaseValidator):
         }
 
         # 학생 결과 로드
-        result_path = data_dir / "result_q1.json"
+        result_path = self._resolve_file("result_q1.json", "result_file_override")
         with open(result_path, "r", encoding="utf-8") as f:
             self._ans = json.load(f)
+
+        # 코드 로드 (solution 파일)
+        code_path = self._resolve_file("q1_solution.py", "solution_file_override")
+        try:
+            with open(code_path, "r", encoding="utf-8") as f:
+                self._code = f.read()
+        except FileNotFoundError:
+            self._code = ""
 
     def build_checklist(self):
         ref = self._ref
