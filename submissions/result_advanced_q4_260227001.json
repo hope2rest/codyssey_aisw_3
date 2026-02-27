@@ -1,0 +1,63 @@
+{
+  "rule_based": {
+    "accuracy": 1.0,
+    "precision_pos": 1.0,
+    "recall_pos": 1.0,
+    "precision_neg": 1.0,
+    "recall_neg": 1.0,
+    "f1_macro": 1.0
+  },
+  "ml_based": {
+    "accuracy": 0.9833,
+    "precision_pos": 0.9816,
+    "recall_pos": 1.0,
+    "precision_neg": 1.0,
+    "recall_neg": 0.8485,
+    "f1_macro": 0.9544
+  },
+  "shap_top5_positive": [
+    {
+      "word": "추천합니다",
+      "shap_value": 0.4381
+    },
+    {
+      "word": "별로입니다",
+      "shap_value": 0.2146
+    },
+    {
+      "word": "실망",
+      "shap_value": 0.1962
+    },
+    {
+      "word": "좋은",
+      "shap_value": 0.166
+    },
+    {
+      "word": "매우",
+      "shap_value": 0.1621
+    }
+  ],
+  "shap_top5_negative": [
+    {
+      "word": "사이즈",
+      "shap_value": -0.0054
+    },
+    {
+      "word": "맞고",
+      "shap_value": -0.0054
+    },
+    {
+      "word": "느리다",
+      "shap_value": -0.0053
+    },
+    {
+      "word": "배송도",
+      "shap_value": -0.0027
+    },
+    {
+      "word": "모두",
+      "shap_value": -0.0012
+    }
+  ],
+  "business_summary": "ML 기반 분석이 규칙 기반 대비 부정 리뷰 탐지에서 우수합니다. 고객 불만의 주요 키워드는 사이즈, 맞고 등으로 긍정 리뷰와 구분됩니다. 부정 키워드 중심의 서비스 개선이 필요합니다."
+}

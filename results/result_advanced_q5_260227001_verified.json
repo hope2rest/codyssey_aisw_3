@@ -1,0 +1,115 @@
+{
+  "mission_id": "aiml_level3_q5_detection",
+  "mission_name": "Q5. 부품결함검출 딥러닝기초 전이학습",
+  "student_id": "260227001",
+  "timestamp": "2026-02-27T16:26:19.689902",
+  "total_points": 100,
+  "earned_points": 100,
+  "score_ratio": 1.0,
+  "pass_count": 10,
+  "fail_count": 0,
+  "passing_threshold": 0.95,
+  "is_passed": true,
+  "checks": [
+    {
+      "id": "1",
+      "description": "클래스 구현 (DefectImageLoader + InspectionLogProcessor)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "2",
+      "description": "데이터 정제 (total_valid_samples + label_distribution)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "중복 제거, NFC 정규화, 유효 레이블 필터, 이미지 존재 확인",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "3",
+      "description": "conv2d 직접 구현 + Sobel 커널",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "4",
+      "description": "규칙 기반 (accuracy 0.5~0.95, edge_threshold_binary)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "5",
+      "description": "ML 기반 (acc>0.85, f1>0.7, PCA 50~400)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "6",
+      "description": "NN Forward Pass (acc>0.8, ReLU+Softmax+가중치 로드)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "7",
+      "description": "전이학습 비교 (pre_acc>0.85 + class_f1 + confusion_matrix)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "8",
+      "description": "개선 실험 (class_weight='balanced' 사용)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "9",
+      "description": "비즈니스 보고서 (4섹션 완성)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "10",
+      "description": "라이브러리 적절 사용 (sklearn O, keras/torch X)",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "keras/torch 대신 sklearn만 사용해야 함",
+      "error_message": ""
+    }
+  ]
+}

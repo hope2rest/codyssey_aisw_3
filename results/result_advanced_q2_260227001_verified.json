@@ -1,0 +1,95 @@
+{
+  "mission_id": "aiml_level1_q2_tfidf",
+  "mission_name": "Q2. TF-IDF 코사인유사도 문서검색",
+  "student_id": "260227001",
+  "timestamp": "2026-02-27T16:26:15.985238",
+  "total_points": 100,
+  "earned_points": 100,
+  "score_ratio": 1.0,
+  "pass_count": 8,
+  "fail_count": 0,
+  "passing_threshold": 0.95,
+  "is_passed": true,
+  "checks": [
+    {
+      "id": "1",
+      "description": "num_documents 일치",
+      "points": 10,
+      "earned_points": 10,
+      "status": "passed",
+      "hint": "빈 줄은 문서로 포함하지 마세요.",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "2",
+      "description": "vocab_size 일치 (NFC 전처리 검증)",
+      "points": 20,
+      "earned_points": 20,
+      "status": "passed",
+      "hint": "NFC 정규화를 lowercase 전에 적용하세요.",
+      "ai_trap": "NFC 정규화 순서: normalize → lowercase → 특수문자 제거",
+      "error_message": ""
+    },
+    {
+      "id": "3",
+      "description": "tfidf_matrix_shape 일치",
+      "points": 5,
+      "earned_points": 5,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "4",
+      "description": "쿼리1 검색 결과",
+      "points": 13,
+      "earned_points": 13,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "5",
+      "description": "쿼리2 검색 결과",
+      "points": 13,
+      "earned_points": 13,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "6",
+      "description": "쿼리3 검색 결과",
+      "points": 13,
+      "earned_points": 13,
+      "status": "passed",
+      "hint": "",
+      "ai_trap": "",
+      "error_message": ""
+    },
+    {
+      "id": "7",
+      "description": "쿼리4 검색 결과",
+      "points": 13,
+      "earned_points": 13,
+      "status": "passed",
+      "hint": "NFC 미적용 시 '빅데이터'/'분석' 누락 가능",
+      "ai_trap": "NFC 정규화 미적용으로 한국어 토큰 분리 오류",
+      "error_message": ""
+    },
+    {
+      "id": "8",
+      "description": "쿼리5 검색 결과",
+      "points": 13,
+      "earned_points": 13,
+      "status": "passed",
+      "hint": "한국어 불용어만으로 구성된 쿼리 → 유사도 0이어야 함",
+      "ai_trap": "불용어 필터링 후 빈 쿼리 처리 필요",
+      "error_message": ""
+    }
+  ]
+}
