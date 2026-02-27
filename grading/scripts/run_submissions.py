@@ -103,6 +103,11 @@ def main():
         default="./results",
         help="채점 결과 출력 디렉토리",
     )
+    parser.add_argument(
+        "--filter",
+        default=None,
+        help="특정 제출물만 채점 (부분 문자열 매칭, 예: q3, 260227001, advanced_q3_260227001)",
+    )
     args = parser.parse_args()
 
     data_root = Path(args.data_root).resolve()
@@ -140,6 +145,10 @@ def main():
     # 2. 각 제출물 채점
     for (stage, qnum, sid), files in sorted(groups.items()):
         label = f"{stage}_q{qnum}_{sid}"
+
+        # --filter 적용
+        if args.filter and args.filter not in label:
+            continue
         result_file = files.get("result_file")
         solution_file = files.get("solution_file")
 
