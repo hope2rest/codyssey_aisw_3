@@ -111,27 +111,26 @@ pip install -r requirements.txt
 
 ## 사용법
 
-### 제출물 일괄 채점 (권장)
+### 빠른 채점 (`grade` 명령어)
+
+프로젝트 루트(`codyssey_aisw/`)에서 `grade.bat`을 사용합니다.
 
 ```bash
-# submissions/ 폴더의 모든 제출물을 채점하여 results/에 출력
-python -m grading.scripts.run_submissions \
-  --data-root . \
-  --submissions-dir ./submissions \
-  --output-dir ./results
+grade                          # 전체 제출물 채점
+grade q3                       # Q3 문항만 채점
+grade 260227001                # 특정 학생만 채점
+grade advanced_q3_260227001    # 특정 학생의 특정 문항만 채점
 ```
+
+> `grade` 뒤의 인자는 부분 문자열 매칭입니다. `q3`을 입력하면 파일명에 `q3`이 포함된 제출물만 채점됩니다.
 
 실행 결과 예시:
 ```
 ============================================================
      제출물 기반 일괄 채점 시스템
 ============================================================
-  데이터 루트: /path/to/codyssey_aisw
-  제출물 디렉토리: /path/to/codyssey_aisw/submissions
-  출력 디렉토리: /path/to/codyssey_aisw/results
-============================================================
 
-[INFO] 3개 제출물 발견
+[INFO] 5개 제출물 발견
 
 [PASS] advanced_q1_260227001: 100/100 -> result_advanced_q1_260227001_verified.json
 [FAIL] advanced_q2_260227001: 70/100 -> result_advanced_q2_260227001_failed.json
@@ -140,40 +139,22 @@ python -m grading.scripts.run_submissions \
 ============================================================
                     채점 요약
 ============================================================
-  전체: 3건
+  전체: 5건
   합격(PASS): 1건
   불합격(FAIL): 1건
   건너뜀(SKIP): 1건
-  오류(ERROR): 0건
 ============================================================
 ```
 
-### 단일 문항 채점 (개발/디버그용)
+### 전체 명령어 (grade.bat 없이 직접 실행할 경우)
 
 ```bash
-python -m grading.scripts.run_grading \
-  --student-id S001 \
-  --mission-id aiml_level1_q1_svd \
-  --submission-dir ./q1_svd
+# 전체 채점
+python -m grading.scripts.run_submissions
+
+# 필터 지정
+python -m grading.scripts.run_submissions --filter q3
 ```
-
-### 전체 5문항 일괄 채점 (개발/디버그용)
-
-```bash
-python -m grading.scripts.run_all \
-  --student-id S001 \
-  --submission-dir .
-```
-
-### 미션 ID 참조
-
-| 미션 ID | 문항 |
-|---------|------|
-| `aiml_level1_q1_svd` | Q1 SVD |
-| `aiml_level1_q2_tfidf` | Q2 TF-IDF |
-| `aiml_level2_q3_cv` | Q3 CV |
-| `aiml_level2_q4_sentiment` | Q4 감성분석 |
-| `aiml_level3_q5_detection` | Q5 결함검출 |
 
 ---
 
