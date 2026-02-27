@@ -196,22 +196,21 @@ def main():
 
             # 결과 판정
             status = "verified" if result.is_passed else "failed"
-            out_name = f"result_{stage}_q{qnum}_{sid}_{status}"
-            out_path = output_dir / out_name
-            out_path.mkdir(parents=True, exist_ok=True)
+            out_base = f"result_{stage}_q{qnum}_{sid}_{status}"
+            output_dir.mkdir(parents=True, exist_ok=True)
 
-            # result.json 저장
-            with open(out_path / "result.json", "w", encoding="utf-8") as f:
+            # result JSON 저장
+            with open(output_dir / f"{out_base}.json", "w", encoding="utf-8") as f:
                 f.write(result.to_json())
 
-            # report.md 저장
-            with open(out_path / "report.md", "w", encoding="utf-8") as f:
+            # report MD 저장
+            with open(output_dir / f"{out_base}.md", "w", encoding="utf-8") as f:
                 f.write(result.to_markdown())
 
             # 콘솔 출력
             mark = "PASS" if result.is_passed else "FAIL"
             score = f"{result.earned_points}/{result.total_points}"
-            print(f"[{mark}] {label}: {score} -> {out_name}/")
+            print(f"[{mark}] {label}: {score} -> {out_base}.json")
 
             if result.is_passed:
                 success_count += 1

@@ -44,15 +44,13 @@
 │  4. results/ 폴더에 결과 생성                                      │
 │                                                                 │
 │     results/                                                    │
-│     ├── result_advanced_q1_260227001_verified/                  │
-│     │   ├── result.json    ← 기계 판독용 (점수, 항목별 상세)        │
-│     │   └── report.md      ← 사람 판독용 (마크다운 리포트)          │
-│     ├── result_advanced_q2_260227001_failed/                    │
-│     │   ├── result.json                                         │
-│     │   └── report.md                                           │
+│     ├── result_advanced_q1_260227001_verified.json  ← 기계 판독  │
+│     ├── result_advanced_q1_260227001_verified.md    ← 사람 판독  │
+│     ├── result_advanced_q2_260227001_failed.json                │
+│     ├── result_advanced_q2_260227001_failed.md                  │
 │     └── ...                                                     │
 │                                                                 │
-│     폴더명 규칙: result_{단계}_q{번호}_{학번}_{verified|failed}/    │
+│     파일명 규칙: result_{단계}_q{번호}_{학번}_{verified|failed}     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -135,8 +133,8 @@ python -m grading.scripts.run_submissions \
 
 [INFO] 3개 제출물 발견
 
-[PASS] advanced_q1_260227001: 100/100 -> result_advanced_q1_260227001_verified/
-[FAIL] advanced_q2_260227001: 70/100 -> result_advanced_q2_260227001_failed/
+[PASS] advanced_q1_260227001: 100/100 -> result_advanced_q1_260227001_verified.json
+[FAIL] advanced_q2_260227001: 70/100 -> result_advanced_q2_260227001_failed.json
 [SKIP] advanced_q3_260227001: solution 파일 누락
 
 ============================================================
@@ -181,7 +179,7 @@ python -m grading.scripts.run_all \
 
 ## 결과 확인 방법
 
-채점이 완료되면 `results/` 폴더에 학생별/문항별 디렉토리가 생성됩니다.
+채점이 완료되면 `results/` 폴더에 학생별/문항별 파일이 생성됩니다.
 
 ### result.json (기계 판독용)
 
