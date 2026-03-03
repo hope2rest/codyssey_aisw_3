@@ -358,5 +358,5 @@ class Q6ClusteringValidator(BaseValidator):
 | Q3 | MAE=0 | 과적합 의심으로 0점 처리 |
 | Q3 | test_01 | 이미지 없는 항목 제외 필수 |
 | Q4 | 데이터 누수 | fit_transform(train) + transform(test) 분리 |
-| Q5 | 파일명 | q6_solution.py / result_q6.json 사용 (내부 매핑) |
+| Q5 | 파일명 | q5_solution.py / result_q5.json 사용 |
 | Q5 | keras/torch | sklearn만 사용 가능 |

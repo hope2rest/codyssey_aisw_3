@@ -7,8 +7,8 @@ time_limit: 120
 passing_score: 0.95
 
 data_dir: data
-solution_file: q6_solution.py
-result_file: result_q6.json
+solution_file: q5_solution.py
+result_file: result_q5.json
 solution_required: true
 
 validators:
@@ -20,7 +20,7 @@ ai_traps:
   - "class_weight='balanced' 적용 필수"
   - "ReLU, Softmax 직접 구현 (NumPy)"
   - "pretrained_nn_weights.npz에서 가중치 로드"
-  - "파일명: q6_solution.py, result_q6.json (q5가 아님!)"
+  - "파일명: q5_solution.py, result_q5.json"
 
 checks:
   - id: "1"

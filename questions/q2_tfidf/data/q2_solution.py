@@ -1,86 +1,142 @@
-"""문제 2 정답"""
-import numpy as np, re, json, unicodedata
+import re
+import json
+import numpy as np
+from collections import Counter
 
-# 불용어 로드 (strip + 중복/빈줄 제거)
-with open("stopwords.txt", "r", encoding="utf-8") as f:
-    stopwords = set(l.strip() for l in f if l.strip())
+DATA_DIR = "C:/Users/ks.lee/Desktop/aisw/aisw/codyssey_aisw/questions/q2_tfidf/data/"
+
+# Load stopwords
+with open(DATA_DIR + "stopwords.txt", "r", encoding="utf-8") as f:
+    stopwords = set(line.strip() for line in f if line.strip())
+
+# Load documents - skip empty lines
+with open(DATA_DIR + "documents.txt", "r", encoding="utf-8") as f:
+    documents = [line.strip() for line in f if line.strip()]
+
+# Load queries
+with open(DATA_DIR + "queries.txt", "r", encoding="utf-8") as f:
+    queries = [line.strip() for line in f if line.strip()]
+
+print(f"Documents: {len(documents)}")
+print(f"Stopwords count: {len(stopwords)}")
+print(f"Queries: {queries}")
+
 
 def preprocess(text):
-    text = unicodedata.normalize('NFC', text)   # [함정A] NFD→NFC
-    text = text.lower()                          # [함정C] 소문자 먼저
-    text = re.sub(r"[^가-힣a-z0-9\s]", "", text)
+    # (a) lowercase
+    text = text.lower()
+    # (b) remove everything except Korean (가-힣), English letters, digits, whitespace
+    text = re.sub(r'[^\uAC00-\uD7A3a-z0-9\s]', ' ', text)
+    # (c) split by whitespace
     tokens = text.split()
-    tokens = [t for t in tokens if t not in stopwords]  # [함정C] 소문자 후 불용어
-    return [t for t in tokens if len(t) > 1]
+    # (d) remove stopwords
+    tokens = [t for t in tokens if t not in stopwords]
+    # (e) remove tokens with length <= 1
+    tokens = [t for t in tokens if len(t) > 1]
+    return tokens
 
-# 문서 로드 (빈 줄 무시)
-with open("documents.txt", "r", encoding="utf-8") as f:
-    docs = [l.strip() for l in f if l.strip()]
 
-tokenized = [preprocess(d) for d in docs]
-N = len(docs)
-print(f"문서 수: {N}")
+# Preprocess all documents
+tokenized_docs = [preprocess(doc) for doc in documents]
+N = len(documents)
 
-# 빈 문서 확인 [함정B]
-for i, t in enumerate(tokenized):
+print(f"\nN (doc count): {N}")
+for i, t in enumerate(tokenized_docs):
     if len(t) == 0:
-        print(f"  [주의] 문서 {i}: 전처리 후 토큰 0개")
+        print(f"  Warning: doc {i} has 0 tokens after preprocessing")
 
-vocab = sorted(set(w for d in tokenized for w in d))
-w2i = {w: i for i, w in enumerate(vocab)}
-V = len(vocab)
-print(f"어휘 수: {V}")
+# Build vocabulary sorted alphabetically
+vocab_set = set()
+for tokens in tokenized_docs:
+    vocab_set.update(tokens)
 
-# TF (빈 문서는 0벡터) [함정B]
-tf = np.zeros((N, V))
-for i, d in enumerate(tokenized):
-    if len(d) == 0: continue  # 빈 문서 → TF 0벡터
-    for w in d:
-        tf[i, w2i[w]] += 1
-    tf[i] /= len(d)
+vocab = sorted(vocab_set)
+vocab_size = len(vocab)
+word2idx = {word: idx for idx, word in enumerate(vocab)}
 
-# Smooth IDF
-df_vec = np.sum(tf > 0, axis=0)
-idf = np.log((N + 1) / (df_vec + 1)) + 1
-tfidf = tf * idf
+print(f"Vocab size: {vocab_size}")
 
-def cos_sim(a, b):
-    na, nb = np.linalg.norm(a), np.linalg.norm(b)
-    return 0.0 if na == 0 or nb == 0 else float(np.dot(a, b) / (na * nb))
+# Compute TF matrix: shape (N, vocab_size)
+tf_matrix = np.zeros((N, vocab_size), dtype=np.float64)
+for i, tokens in enumerate(tokenized_docs):
+    if len(tokens) == 0:
+        continue
+    total = len(tokens)
+    counts = Counter(tokens)
+    for word, cnt in counts.items():
+        if word in word2idx:
+            tf_matrix[i, word2idx[word]] = cnt / total
 
-def query_tfidf(q):
-    tokens = preprocess(q)
-    qtf = np.zeros(V)
-    if len(tokens) == 0: return qtf
-    for t in tokens:
-        if t in w2i: qtf[w2i[t]] += 1
-    qtf /= len(tokens)
-    return qtf * idf
+# Compute IDF: log((N+1)/(df+1)) + 1
+df = np.sum(tf_matrix > 0, axis=0)  # document frequency per term
+idf = np.log((N + 1) / (df + 1)) + 1  # smooth IDF
 
-def search(query, top_n=3):
-    qv = query_tfidf(query)
-    sims = [(i, cos_sim(qv, tfidf[i])) for i in range(N)]
+# TF-IDF matrix
+tfidf_matrix = tf_matrix * idf
+print(f"TF-IDF matrix shape: {tfidf_matrix.shape}")
+
+
+def cosine_similarity(a, b):
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    return float(np.dot(a, b) / (norm_a * norm_b))
+
+
+def search(query_text, top_n=3):
+    # Preprocess query the same way
+    q_tokens = preprocess(query_text)
+    print(f"  Query tokens: {q_tokens}")
+
+    # Build query TF vector using corpus vocab
+    q_tf = np.zeros(vocab_size, dtype=np.float64)
+    if len(q_tokens) > 0:
+        total = len(q_tokens)
+        counts = Counter(q_tokens)
+        for word, cnt in counts.items():
+            if word in word2idx:
+                q_tf[word2idx[word]] = cnt / total
+
+    # Apply corpus IDF (do NOT recompute with query)
+    q_tfidf = q_tf * idf
+
+    # Compute cosine similarity with each document
+    sims = []
+    for doc_idx in range(N):
+        sim = cosine_similarity(q_tfidf, tfidf_matrix[doc_idx])
+        sims.append((doc_idx, sim))
+
+    # Sort: descending similarity, then ascending doc_index for ties
     sims.sort(key=lambda x: (-x[1], x[0]))
-    top = sims[:top_n]
-    if all(s == 0 for _, s in top):
-        return [{"doc_index": i, "similarity": 0.0} for i in range(top_n)]
-    return [{"doc_index": i, "similarity": round(s, 6)} for i, s in top]
+    return sims[:top_n]
 
-with open("queries.txt", "r", encoding="utf-8") as f:
-    queries = [l.strip() for l in f if l.strip()]
 
-sr = []
-for q in queries:
-    top3 = search(q)
-    sr.append({"query": q, "top3": top3})
-    print(f"쿼리: '{q[:25]}...' → {[t['doc_index'] for t in top3]}")
+# Run search for each query and collect results
+search_results = []
+for query in queries:
+    print(f"\nQuery: '{query}'")
+    top3 = search(query, top_n=3)
+    print(f"  Top3: {top3}")
+    result = {
+        "query": query,
+        "top3": [
+            {"doc_index": int(doc_idx), "similarity": round(float(sim), 6)}
+            for doc_idx, sim in top3
+        ]
+    }
+    search_results.append(result)
 
-result = {
-    "num_documents": N,
-    "vocab_size": V,
-    "tfidf_matrix_shape": [N, V],
-    "search_results": sr
+# Build output JSON
+output = {
+    "vocab_size": vocab_size,
+    "tfidf_matrix_shape": list(tfidf_matrix.shape),
+    "search_results": search_results
 }
-with open("result_q2.json", "w", encoding="utf-8") as f:
-    json.dump(result, f, ensure_ascii=False, indent=2)
-print("result_q2.json 저장 완료!")
+
+output_path = DATA_DIR + "result_q2.json"
+with open(output_path, "w", encoding="utf-8") as f:
+    json.dump(output, f, ensure_ascii=False, indent=2)
+
+print(f"\nSaved result to: {output_path}")
+print(json.dumps(output, ensure_ascii=False, indent=2))

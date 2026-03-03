@@ -49,8 +49,7 @@ class Q5DetectionValidator(BaseValidator):
         self._expected_dist = df["defect_type"].value_counts().to_dict()
 
         # 코드 분석
-        # Q5 문제는 q6_solution.py를 사용 (파일명 매핑)
-        solution_name = self.config.get("solution_file", "q6_solution.py")
+        solution_name = self.config.get("solution_file", "q5_solution.py")
         code_path = self._resolve_file(solution_name, "solution_file_override")
         try:
             with open(code_path, "r", encoding="utf-8") as f:
@@ -68,7 +67,7 @@ class Q5DetectionValidator(BaseValidator):
             self._funcs = []
 
         # 학생 결과 로드
-        result_name = self.config.get("result_file", "result_q6.json")
+        result_name = self.config.get("result_file", "result_q5.json")
         result_path = self._resolve_file(result_name, "result_file_override")
         with open(result_path, "r", encoding="utf-8") as f:
             self._ans = json.load(f)
@@ -149,28 +148,28 @@ class Q5DetectionValidator(BaseValidator):
             validator=check_conv2d_sobel,
         ))
 
-        # 4. 규칙 기반 결과 (10점)
+        # 4. 규칙 기반 결과 (10점) — 허용 범위 축소
         def check_rule_based():
             rb = ans.get("rule_based", {})
             rb_acc = rb.get("test_accuracy", 0)
-            if 0.5 <= rb_acc <= 0.95 and rb.get("method") == "edge_threshold_binary":
+            if 0.65 <= rb_acc <= 0.85 and rb.get("method") == "edge_threshold_binary":
                 return True
             return (False, f"accuracy={rb_acc}, method={rb.get('method')}")
 
         self.checklist.add_item(CheckItem(
             id="4",
-            description="규칙 기반 (accuracy 0.5~0.95, edge_threshold_binary)",
+            description="규칙 기반 (accuracy 0.65~0.85, edge_threshold_binary)",
             points=10,
             validator=check_rule_based,
         ))
 
-        # 5. ML 기반 결과 (10점)
+        # 5. ML 기반 결과 (10점) — 임계값 상향
         def check_ml_based():
             ml = ans.get("ml_based", {})
             ml_acc = ml.get("test_accuracy", 0)
             ml_f1 = ml.get("test_f1_macro", 0)
             pca_n = ml.get("pca_n_components", 0)
-            if ml_acc > 0.85 and ml_f1 > 0.7 and 50 <= pca_n <= 400:
+            if ml_acc > 0.93 and ml_f1 > 0.85 and 100 <= pca_n <= 400:
                 return True
             return (
                 False,
@@ -179,12 +178,12 @@ class Q5DetectionValidator(BaseValidator):
 
         self.checklist.add_item(CheckItem(
             id="5",
-            description="ML 기반 (acc>0.85, f1>0.7, PCA 50~400)",
+            description="ML 기반 (acc>0.93, f1>0.85, PCA 100~400)",
             points=10,
             validator=check_ml_based,
         ))
 
-        # 6. NN Forward Pass (10점)
+        # 6. NN Forward Pass (10점) — 임계값 상향
         def check_nn_forward():
             nn = ans.get("nn_forward", {})
             nn_acc = nn.get("test_accuracy", 0)
@@ -196,10 +195,10 @@ class Q5DetectionValidator(BaseValidator):
             has_softmax = "softmax" in code.lower() or "exp(" in code
             has_weight_load = "pretrained_nn_weights" in code
 
-            if nn_acc > 0.8 and has_relu and has_softmax and has_weight_load:
+            if nn_acc > 0.9 and has_relu and has_softmax and has_weight_load:
                 return True
             reasons = []
-            if nn_acc <= 0.8:
+            if nn_acc <= 0.9:
                 reasons.append(f"accuracy 낮음({nn_acc})")
             if not has_relu:
                 reasons.append("ReLU 미구현")
@@ -211,18 +210,18 @@ class Q5DetectionValidator(BaseValidator):
 
         self.checklist.add_item(CheckItem(
             id="6",
-            description="NN Forward Pass (acc>0.8, ReLU+Softmax+가중치 로드)",
+            description="NN Forward Pass (acc>0.9, ReLU+Softmax+가중치 로드)",
             points=10,
             validator=check_nn_forward,
         ))
 
-        # 7. 전이학습 비교 (10점)
+        # 7. 전이학습 비교 (10점) — 임계값 상향
         def check_transfer():
             pre = ans.get("pretrained", {})
             pre_acc = pre.get("test_accuracy", 0)
             tg = ans.get("transfer_gain")
 
-            if not (pre_acc > 0.85 and tg is not None and isinstance(tg, (int, float))):
+            if not (pre_acc > 0.93 and tg is not None and isinstance(tg, (int, float))):
                 return (
                     False,
                     f"pre_acc={pre_acc}, transfer_gain={tg}",
@@ -239,7 +238,7 @@ class Q5DetectionValidator(BaseValidator):
 
         self.checklist.add_item(CheckItem(
             id="7",
-            description="전이학습 비교 (pre_acc>0.85 + class_f1 + confusion_matrix)",
+            description="전이학습 비교 (pre_acc>0.93 + class_f1 + confusion_matrix)",
             points=10,
             validator=check_transfer,
         ))

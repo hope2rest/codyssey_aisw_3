@@ -1,0 +1,11 @@
+Shape: (503, 3)
+Columns: ['part_id', 'defect_type', 'inspector_note']
+Null values: {'part_id': 0, 'defect_type': 0, 'inspector_note': 5}
+Unique part_ids: 500
+NFC defect counts: {'양품': 287, '스크래치': 72, '변색': 49, '크랙': 48, '이물질': 27, '양품 ': 8, ' 양품': 4, '  양품  ': 2, '  크랙  ': 1, ' 스크래치': 1, '변색 ': 1, '스크래치 ': 1, '  스크래치  ': 1, ' 크랙': 1}
+Invalid defect count: 20
+Sample invalid: ['양품 ', '  크랙  ', '  양품  ', '양품 ', ' 스크래치']
+part_id sample (first 5): [0, 1, 2, 3, 4]
+part_id sample (last 5): [498, 499, 10, 20, 30]
+part_id dtype: int64
+Duplicate part_ids: 3

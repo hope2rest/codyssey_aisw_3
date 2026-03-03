@@ -1,5 +1,13 @@
 {
   "rule_based": {
+    "accuracy": 0.9524,
+    "precision_pos": 1.0,
+    "recall_pos": 0.9474,
+    "precision_neg": 0.6667,
+    "recall_neg": 1.0,
+    "f1_macro": 0.8865
+  },
+  "ml_based": {
     "accuracy": 1.0,
     "precision_pos": 1.0,
     "recall_pos": 1.0,
@@ -7,57 +15,49 @@
     "recall_neg": 1.0,
     "f1_macro": 1.0
   },
-  "ml_based": {
-    "accuracy": 0.9833,
-    "precision_pos": 0.9816,
-    "recall_pos": 1.0,
-    "precision_neg": 1.0,
-    "recall_neg": 0.8485,
-    "f1_macro": 0.9544
-  },
   "shap_top5_positive": [
     {
       "word": "추천합니다",
-      "shap_value": 0.4381
+      "shap_value": 0.3395
+    },
+    {
+      "word": "불편하다",
+      "shap_value": 0.3095
     },
     {
       "word": "별로입니다",
-      "shap_value": 0.2146
+      "shap_value": 0.175
     },
     {
       "word": "실망",
-      "shap_value": 0.1962
+      "shap_value": 0.1471
     },
     {
       "word": "좋은",
-      "shap_value": 0.166
-    },
-    {
-      "word": "매우",
-      "shap_value": 0.1621
+      "shap_value": 0.1377
     }
   ],
   "shap_top5_negative": [
     {
-      "word": "사이즈",
-      "shap_value": -0.0054
+      "word": "훌륭합니다",
+      "shap_value": -0.016
     },
     {
-      "word": "맞고",
-      "shap_value": -0.0054
-    },
-    {
-      "word": "느리다",
-      "shap_value": -0.0053
+      "word": "정말",
+      "shap_value": -0.0097
     },
     {
       "word": "배송도",
-      "shap_value": -0.0027
+      "shap_value": -0.008
     },
     {
-      "word": "모두",
-      "shap_value": -0.0012
+      "word": "만족합니다",
+      "shap_value": -0.0018
+    },
+    {
+      "word": "최고입니다",
+      "shap_value": -0.0017
     }
   ],
-  "business_summary": "ML 기반 분석이 규칙 기반 대비 부정 리뷰 탐지에서 우수합니다. 고객 불만의 주요 키워드는 사이즈, 맞고 등으로 긍정 리뷰와 구분됩니다. 부정 키워드 중심의 서비스 개선이 필요합니다."
+  "business_summary": "머신러닝 모델은 규칙 기반 모델 대비 부정 리뷰 탐지율이 높아 고객 불만을 보다 정확히 식별합니다. 긍정 예측에는 '추천합니다' 등의 단어가, 부정 예측에는 '훌륭합니다' 등의 단어가 주요하게 작용합니다. 마케팅팀은 긍정 키워드를 홍보에 활용하고, 영업팀은 부정 키워드 중심으로 고객 불만 원인을 파악하여 서비스를 개선할 수 있습니다."
 }
